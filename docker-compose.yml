@@ -1,0 +1,40 @@
+version: "3.9"
+
+services:
+  mongodb:
+    image: mongo:7
+    container_name: ems-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+
+  server:
+    build:
+      context: ./server
+    depends_on:
+      - mongodb
+    ports:
+      - "5000:5000"
+    environment:
+      PORT: 5000
+      NODE_ENV: production
+      MONGODB_URI: mongodb://mongodb:27017/employee-management
+      JWT_SECRET: change-me
+      JWT_EXPIRES_IN: 1d
+      CLIENT_URL: http://localhost:5173
+      SUPER_ADMIN_EMAIL: admin@ems.local
+      SUPER_ADMIN_PASSWORD: Admin@123
+
+  client:
+    build:
+      context: ./client
+    depends_on:
+      - server
+    ports:
+      - "5173:80"
+
+volumes:
+  mongodb_data:
+

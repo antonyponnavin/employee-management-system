@@ -1,0 +1,146 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color: #14213d;
+  background: #f6f4ef;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color-scheme: light;
+}
+
+:root.dark {
+  color: #edf2f7;
+  background: #0f172a;
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background: var(--app-bg, #f6f4ef);
+  color: inherit;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+.page-shell {
+  @apply min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(252,163,17,0.15),_transparent_24%),linear-gradient(180deg,_#f9f8f3_0%,_#eef2f7_100%)];
+}
+
+.dark .page-shell {
+  @apply bg-[radial-gradient(circle_at_top_left,_rgba(252,163,17,0.18),_transparent_22%),linear-gradient(180deg,_#111827_0%,_#020617_100%)];
+}
+
+.card {
+  @apply rounded-3xl bg-white/90 shadow-soft backdrop-blur;
+}
+
+.dark .card {
+  @apply border border-slate-800 text-slate-100;
+  background-color: rgba(15, 23, 42, 0.88);
+  box-shadow: 0 20px 50px rgba(2, 6, 23, 0.45);
+}
+
+.input {
+  @apply w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-gold focus:ring-2 focus:ring-gold/20;
+}
+
+.select {
+  @apply input;
+}
+
+.select-modern {
+  @apply flex w-full items-center justify-between gap-3 rounded-2xl border border-slate-300 bg-white px-5 py-3 text-left text-sm font-medium transition hover:border-slate-400 focus:outline-none focus:ring-2 focus:ring-gold/20;
+}
+
+.select-modern-menu {
+  @apply absolute left-0 right-0 top-[calc(100%+0.6rem)] z-50 overflow-hidden rounded-2xl border border-slate-200 p-2 shadow-2xl backdrop-blur;
+  background-color: rgba(255, 255, 255, 1);
+}
+
+.select-modern-option {
+  @apply flex w-full items-center justify-between rounded-xl bg-white px-4 py-3 text-left text-sm text-slate-700 transition hover:bg-slate-100;
+}
+
+.select-modern-option-active {
+  @apply bg-slate-100 text-slate-900;
+}
+
+.dark .input,
+.dark .select {
+  @apply border-slate-700 bg-slate-950 text-slate-100 placeholder:text-slate-500 focus:border-gold;
+}
+
+.dark .select-modern {
+  @apply border-slate-700 bg-slate-950 text-slate-100 hover:border-slate-500;
+}
+
+.dark .select-modern-menu {
+  @apply border-slate-700;
+  background-color: rgba(2, 6, 23, 1);
+}
+
+.dark .select-modern-option {
+  @apply bg-slate-950 text-slate-200 hover:bg-slate-800;
+}
+
+.dark .select-modern-option-active {
+  @apply bg-slate-800 text-slate-50;
+}
+
+.button-primary {
+  @apply inline-flex items-center justify-center rounded-2xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:text-slate-100;
+}
+
+.button-secondary {
+  @apply inline-flex items-center justify-center rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:border-slate-500 hover:bg-slate-50;
+}
+
+.button-danger {
+  @apply inline-flex items-center justify-center rounded-2xl bg-rose-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-rose-700 disabled:cursor-not-allowed disabled:bg-rose-300;
+}
+
+.button-ghost {
+  @apply inline-flex items-center justify-center rounded-2xl border border-slate-300 bg-white/85 px-4 py-3 text-sm font-semibold text-slate-700 transition hover:border-slate-500 hover:bg-slate-50;
+}
+
+.dark .button-primary {
+  @apply bg-blue-600 text-white hover:bg-blue-500 disabled:bg-slate-700 disabled:text-slate-300;
+}
+
+.dark .button-secondary,
+.dark .button-ghost {
+  @apply border-slate-700 bg-slate-900 text-slate-100 hover:border-slate-500 hover:bg-slate-800;
+}
+
+.dark .button-danger {
+  @apply bg-rose-500 text-white hover:bg-rose-400 disabled:bg-slate-700 disabled:text-slate-300;
+}
+
+.table-head {
+  @apply px-4 py-4 text-left text-xs font-semibold uppercase tracking-[0.16em] text-slate-600;
+}
+
+.table-cell {
+  @apply px-4 py-4 text-sm text-slate-700;
+}
+
+.table-head-row {
+  @apply bg-slate-100/95;
+}
+
+.dark .table-head {
+  @apply text-slate-300;
+}
+
+.dark .table-head-row {
+  background: linear-gradient(180deg, rgba(30, 41, 59, 0.98) 0%, rgba(15, 23, 42, 0.98) 100%);
+}
+
+.dark .table-cell {
+  @apply text-slate-200;
+}
