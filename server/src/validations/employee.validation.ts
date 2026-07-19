@@ -42,6 +42,7 @@ export const employeeBaseSchema = z.object({
 export const createEmployeeSchema = employeeBaseSchema;
 
 export const updateEmployeeSchema = employeeBaseSchema.partial().extend({
+  currentPassword: z.string().min(8).optional(),
   password: z.string().min(8).optional()
 });
 
@@ -56,7 +57,9 @@ export const selfUpdateSchema = z.object({
   phone: z.string().trim().regex(phoneRegex, "Enter a valid phone number").optional(),
   profileImage: z
     .union([z.string().trim().url("Enter a valid profile image URL"), z.literal(""), z.null()])
-    .optional()
+    .optional(),
+  currentPassword: z.string().min(8, "Current password must be at least 8 characters").optional(),
+  password: z.string().min(8, "Password must be at least 8 characters").optional()
 });
 
 export const employeeListQuerySchema = z.object({

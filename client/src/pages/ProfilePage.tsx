@@ -15,6 +15,9 @@ type ProfileFormValues = {
   joiningDate: string;
   status: EmployeeStatus;
   profileImage: string;
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
 };
 
 const Field = ({ label, value }: { label: string; value: string }) => (
@@ -28,6 +31,7 @@ export const ProfilePage = () => {
   const { user, setCurrentUser } = useAuth();
   const queryClient = useQueryClient();
   const [isEditing, setIsEditing] = useState(false);
+  const [formError, setFormError] = useState("");
   const [values, setValues] = useState<ProfileFormValues>({
     name: user?.name || "",
     email: user?.email || "",
@@ -37,7 +41,10 @@ export const ProfilePage = () => {
     salary: user?.salary ? String(user.salary) : "",
     joiningDate: user?.joiningDate?.slice(0, 10) || "",
     status: user?.status || "ACTIVE",
-    profileImage: user?.profileImage || ""
+    profileImage: user?.profileImage || "",
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: ""
   });
 
   useEffect(() => {
@@ -52,7 +59,10 @@ export const ProfilePage = () => {
       salary: String(user.salary),
       joiningDate: user.joiningDate.slice(0, 10),
       status: user.status,
-      profileImage: user.profileImage || ""
+      profileImage: user.profileImage || "",
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: ""
     });
   }, [user]);
 
@@ -65,7 +75,13 @@ export const ProfilePage = () => {
           ? {
               name: values.name,
               phone: values.phone,
-              profileImage: values.profileImage || null
+              profileImage: values.profileImage || null,
+              ...(values.newPassword
+                ? {
+                    currentPassword: values.currentPassword,
+                    password: values.newPassword
+                  }
+                : {})
             }
           : {
               name: values.name,
@@ -76,7 +92,13 @@ export const ProfilePage = () => {
               salary: Number(values.salary),
               joiningDate: values.joiningDate,
               status: values.status,
-              profileImage: values.profileImage || null
+              profileImage: values.profileImage || null,
+              ...(values.newPassword
+                ? {
+                    currentPassword: values.currentPassword,
+                    password: values.newPassword
+                  }
+                : {})
             };
 
       return updateEmployee(user!.id, payload);
@@ -84,6 +106,7 @@ export const ProfilePage = () => {
     onSuccess: async (updatedUser) => {
       setCurrentUser(updatedUser);
       setIsEditing(false);
+      setFormError("");
       queryClient.setQueryData(["employee", user?.id], updatedUser);
       await queryClient.invalidateQueries({ queryKey: ["employee", user?.id] });
     }
@@ -95,6 +118,25 @@ export const ProfilePage = () => {
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setFormError("");
+
+    if (values.newPassword || values.currentPassword || values.confirmPassword) {
+      if (!values.currentPassword) {
+        setFormError("Current password is required to set a new password.");
+        return;
+      }
+
+      if (values.newPassword.length < 8) {
+        setFormError("New password must be at least 8 characters.");
+        return;
+      }
+
+      if (values.newPassword !== values.confirmPassword) {
+        setFormError("New password and confirm password must match.");
+        return;
+      }
+    }
+
     await mutation.mutateAsync();
   };
 
@@ -108,8 +150,12 @@ export const ProfilePage = () => {
       salary: String(user.salary),
       joiningDate: user.joiningDate.slice(0, 10),
       status: user.status,
-      profileImage: user.profileImage || ""
+      profileImage: user.profileImage || "",
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: ""
     });
+    setFormError("");
     setIsEditing(false);
   };
 
@@ -264,7 +310,37 @@ export const ProfilePage = () => {
                 setValues((prev) => ({ ...prev, profileImage: event.target.value }))
               }
             />
+
+            <input
+              className={`input ${canEditAdminFields ? "md:col-span-2" : ""}`.trim()}
+              type="password"
+              placeholder="Current password"
+              value={values.currentPassword}
+              onChange={(event) =>
+                setValues((prev) => ({ ...prev, currentPassword: event.target.value }))
+              }
+            />
+            <input
+              className="input"
+              type="password"
+              placeholder="New password"
+              value={values.newPassword}
+              onChange={(event) =>
+                setValues((prev) => ({ ...prev, newPassword: event.target.value }))
+              }
+            />
+            <input
+              className="input"
+              type="password"
+              placeholder="Confirm new password"
+              value={values.confirmPassword}
+              onChange={(event) =>
+                setValues((prev) => ({ ...prev, confirmPassword: event.target.value }))
+              }
+            />
           </div>
+
+          {formError ? <p className="text-sm text-rose-600">{formError}</p> : null}
 
           <div className="flex justify-end gap-3">
             <button className="button-secondary" onClick={handleCancel} type="button">

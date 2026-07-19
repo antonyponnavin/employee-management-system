@@ -1,7 +1,7 @@
 import { FilterQuery, SortOrder, Types } from "mongoose";
 import { EmployeeModel } from "../models/Employee.js";
 import { ApiError } from "../utils/apiError.js";
-import { hashPassword } from "../utils/password.js";
+import { comparePassword, hashPassword } from "../utils/password.js";
 import { parsePagination } from "../utils/query.js";
 import { Role } from "../models/Employee.js";
 
@@ -33,7 +33,9 @@ type CreateEmployeeInput = {
   password: string;
 };
 
-type UpdateEmployeeInput = Partial<CreateEmployeeInput>;
+type UpdateEmployeeInput = Partial<CreateEmployeeInput> & {
+  currentPassword?: string;
+};
 
 const allowedManagerRolesByEmployeeRole: Record<Role, Role[]> = {
   SUPER_ADMIN: ["SUPER_ADMIN"],
@@ -207,6 +209,17 @@ export const updateEmployee = async (
   await assertValidManagerRole(effectiveRole, effectiveManagerId);
 
   if (input.password) {
+    if (actorId === id) {
+      if (!input.currentPassword) {
+        throw new ApiError(400, "Current password is required to change your password");
+      }
+
+      const isCurrentPasswordValid = await comparePassword(input.currentPassword, employee.password);
+      if (!isCurrentPasswordValid) {
+        throw new ApiError(400, "Current password is incorrect");
+      }
+    }
+
     employee.password = await hashPassword(input.password);
   }
 
